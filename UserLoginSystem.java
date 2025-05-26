@@ -9,104 +9,96 @@ package com.mycompany.userloginsystem;
  * @author RC_Student_lab
  */
 
-import java.util.Scanner;
+import javax.swing.JOptionPane;
+import java.util.ArrayList;
+import com.mycompany.userloginsystem.Message;
 
 public class UserLoginSystem {
     
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        int option;
         
-        // Show user options (register or login)
-        do {
-            System.out.println("=== User Login System ===");
-            System.out.println("1. Register");
-            System.out.println("2. Login");
-            System.out.println("3. Exit");
-            System.out.print("Choose an option: ");
-            
-            option = scanner.nextInt();
-            scanner.nextLine();
+//        Show welcome message
 
-            switch (option) {
-                case 1:
-//  Handle registration process
-        System.out.println("\nYou chose to Register.");
-        handleRegistration(scanner);
-        break;
-                
-        case 2:
-//  Handle login process
-        System.out.println("\nYou chose to Login.");
-        handleLogin(scanner);
-        break;
-                
-        case 3:
-        System.out.println("Exiting the system.");
-        break;
-                
-        default:
-        System.out.println("Invalid option. Please try again.");
-        break;
-            }
-        } while (option != 3);
-
-        scanner.close();
-    }
-
-//  Method for handling registration
-    private static void handleRegistration(Scanner scanner) {
-        System.out.print("Enter first name: ");
-        String firstName = scanner.nextLine();
+        JOptionPane.showMessageDialog(null, "Welcome to QuickChat");
         
-        System.out.print("Enter last name: ");
-        String lastName = scanner.nextLine();
+        Login login = new Login("kyl_1", "Ch&&sec@ke99!", "+27838968976", "Kyle", "Parks");
+        boolean isLoggedIn = login.loginUser("kyl_1", "Ch&&sec@ke99!");
         
-        System.out.print("Enter username: ");
-        String loginUsername = scanner.nextLine();
-        
-        System.out.print("Enter password: ");
-        String loginPassword = scanner.nextLine();
-        
-        System.out.print("Cellphone number (with +27): ");
-        String cellphoneNumber = scanner.nextLine();
-        
-//  Create the Login object to verify the credentials
-        Login login = new Login(loginUsername, loginPassword, "", "", "");
-        String registrationResult = login.registeredUser();
-        
-        while (!"User registered successfully".equals(registrationResult)) {
-            System.out.println(registrationResult);
-            System.out.print("Re-enter username: ");
-            loginUsername = scanner.nextLine();
-            System.out.print("Re-enter password: ");
-            loginPassword = scanner.nextLine();
-            System.out.print("Re-enter cellphone number: ");
-            cellphoneNumber = scanner.nextLine();
-            
-            login = new Login(loginUsername, loginPassword, cellphoneNumber, firstName, lastName);
-            registrationResult = login.registeredUser();           
+        if (!isLoggedIn) {
+            JOptionPane.showMessageDialog(null, "Login failed. Exiting...");
+            System.exit(0);
         }
-        System.out.println("Registration successful!");
-    }
+        
+//        List to store sent messages
 
-    private static void handleLogin(Scanner scanner) {
-        System.out.print("Enter username: ");
-        String loginUsername = scanner.nextLine();
+        ArrayList<Message> sentMessages = new ArrayList<>();
         
-        System.out.print("Enter password: ");
-        String loginPassword = scanner.nextLine();
+//        Main menu loop
+
+        while (true) {
+            String choice = JOptionPane.showInputDialog("Choose an option:\n1. Send Messages\n2. Show Recently Sent Messages\n3. Quit");
+            
+            if (choice == null || choice.equals("3")) {
+                break;
+            }
+            
+            switch (choice) {
+                
+//        Send messages flow        
+                
+                case "1":
+                    
+                    String numStr = JOptionPane.showInputDialog("How many messages would you like to send?");
+                    int numMessages = Integer.parseInt(numStr);
+                    
+                    for (int i = 0; i < numMessages; i++) {
+                        String recipient = JOptionPane.showInputDialog("Enter recipient number (start with + and <= 10 digits):");
+                        
+                        String text = JOptionPane.showInputDialog("Enter message text (max 250 chars):");
+                        
+                        if (text.length() > 250) {
+                            JOptionPane.showMessageDialog(null, "Please enter a message of less than 50 characters.");
+                            continue;
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Message ready to send.");
+                        }
+                        
+                        Message msg = new Message(recipient, text);
+                        
+//        Confirm message action                
+                        
+                        String msgChoice = JOptionPane.showInputDialog("Choose an option:\n1. Send Message\n2. Disregard Message\n3. Store Message");
+                        int msgOption = Integer.parseInt(msgChoice);
+                        
+                        String result = msg.SentMessage(msgOption);
+                        JOptionPane.showMessageDialog(null, result);
+                        
+                        if (msgOption == 1) {
+                            sentMessages.add(msg);
+                        }
+                        
+//        Disregard does nothing; store can call msg.storeMessage() later
+                    }
+                    
+                    break;
+                    
+                case "2":
+                    JOptionPane.showMessageDialog(null, "Coming Soon.");
+                    break;
+                    
+                default:
+                    JOptionPane.showMessageDialog(null, "Invalid option. Please try again.");
+            }
+        }
         
-        System.out.print("Enter cellphone number: ");
-        String cellphoneNumber = scanner.nextLine();
+//        After quitting, show all sent messages  
         
-        System.out.print("Enter first name: ");
-        String firstName = scanner.nextLine();
+        StringBuilder summary = new StringBuilder("Message sent:\n");
+        for (Message m : sentMessages) {
+            summary.append(m.printMessages()).append("\n\n");
+        }
         
-        System.out.print("Enter last name: ");
-        String lastName = scanner.nextLine();
-           
-        Login login = new Login(loginUsername, loginPassword, cellphoneNumber, firstName, lastName);
-        System.out.println(login.returnLoginStatus(loginUsername, loginPassword));
+        summary.append("Total messages sent: ").append(sentMessages.size());
+        JOptionPane.showMessageDialog(null, summary.toString());
     }
 }
