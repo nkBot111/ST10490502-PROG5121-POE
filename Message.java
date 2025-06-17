@@ -134,5 +134,25 @@ public class Message {
         long number = (long) (random.nextDouble() * 10000000000L);
         return String.format("%010d", number);
     }
+    
+    // Getter for message text
+    public String getMessageText() {
+        return messageText;
+    }
+
+    // Getter for recipient cell
+    public String getRecipientCell() {
+        return recipientCell;
+    }
+
+    // Getter for message ID
+    public String getMessageID() {
+        return messageID;
+    }
+
+    // Getter for message hash
+    public String getMessageHash() {
+        return messageHash;
+    }
 }
 
